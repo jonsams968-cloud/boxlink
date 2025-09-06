@@ -29,7 +29,7 @@ let addressesnotls = [];
 let addressesnotlsapi = [];
 let addressescsv = [];
 let DLS = 8;
-let remarkIndex = 1;//CSV备注所在列偏移量
+let remarkIndex = 1;
 let FileName = atob('ZWRnZXR1bm5lbA==');
 let BotToken;
 let ChatID;
@@ -65,7 +65,7 @@ export default {
             } else 动态UUID = userID;
 
             if (!userID) {
-                return new Response('请设置你的UUID变量，或尝试重试部署，检查变量是否生效？', {
+                return new Response('Please set your UUID variable or try deploying again to check if the variable is effective?', {
                     status: 404,
                     headers: {
                         "Content-Type": "text/plain;charset=utf-8",
@@ -214,7 +214,7 @@ export default {
                 } else {
                     if (env.URL302) return Response.redirect(env.URL302, 302);
                     else if (env.URL) return await 代理URL(env.URL, url);
-                    else return new Response('不用怀疑！你UUID就是错的！！！', { status: 404 });
+                    else return new Response('Your UUID is incorrect!', { status: 404 });
                 }
             } else {
                 socks5Address = url.searchParams.get('socks5') || socks5Address;
@@ -274,46 +274,46 @@ async function 维列斯OverWSHandler(request) {
     const webSocketPair = new WebSocketPair();
     const [client, webSocket] = Object.values(webSocketPair);
 
-    // 接受 WebSocket 连接
+    
     webSocket.accept();
 
     let address = '';
     let portWithRandomLog = '';
-    // 日志函数，用于记录连接信息
+    
     const log = (/** @type {string} */ info, /** @type {string | undefined} */ event) => {
         console.log(`[${address}:${portWithRandomLog}] ${info}`, event || '');
     };
-    // 获取早期数据头部，可能包含了一些初始化数据
+    
     const earlyDataHeader = request.headers.get('sec-websocket-protocol') || '';
 
-    // 创建一个可读的 WebSocket 流，用于接收客户端数据
+    
     const readableWebSocketStream = makeReadableWebSocketStream(webSocket, earlyDataHeader, log);
 
-    // 用于存储远程 Socket 的包装器
+    
     let remoteSocketWapper = {
         value: null,
     };
-    // 标记是否为 DNS 查询
+    
     let udpStreamWrite = null;
     let isDns = false;
 
-    // WebSocket 数据流向远程服务器的管道
+    
     readableWebSocketStream.pipeTo(new WritableStream({
         async write(chunk, controller) {
             if (isDns && udpStreamWrite) {
-                // 如果是 DNS 查询，调用 DNS 处理函数
+                
                 //return await handleDNSQuery(chunk, webSocket, null, log);
                 return udpStreamWrite(chunk);
             }
             if (remoteSocketWapper.value) {
-                // 如果已有远程 Socket，直接写入数据
+                
                 const writer = remoteSocketWapper.value.writable.getWriter()
                 await writer.write(chunk);
                 writer.releaseLock();
                 return;
             }
 
-            // 处理 维列斯 协议头部
+            
             const {
                 hasError,
                 message,
@@ -324,15 +324,15 @@ async function 维列斯OverWSHandler(request) {
                 维列斯Version = new Uint8Array([0, 0]),
                 isUDP,
             } = process维列斯Header(chunk, userID);
-            // 设置地址和端口信息，用于日志
+            
             address = addressRemote;
             portWithRandomLog = `${portRemote}--${Math.random()} ${isUDP ? 'udp ' : 'tcp '} `;
             if (hasError) {
-                // 如果有错误，抛出异常
+                
                 throw new Error(message);
                 return;
             }
-            // 如果是 UDP 且端口不是 DNS 端口（53），则关闭连接
+            
             if (isUDP) {
                 if (portRemote === 53) {
                     isDns = true;
@@ -341,7 +341,7 @@ async function 维列斯OverWSHandler(request) {
                     return;
                 }
             }
-            // 构建 维列斯 响应头部
+            
             const 维列斯ResponseHeader = new Uint8Array([维列斯Version[0], 0]);
             // 获取实际的客户端数据
             const rawClientData = chunk.slice(rawDataIndex);
@@ -4568,3 +4568,4 @@ async function nginx() {
 	`
     return text;
 }
+
